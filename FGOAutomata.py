@@ -49,21 +49,53 @@ def calibration():
     
 
     # Once the first area is calibrated, generate all the other coordinates
-    
-    file_data = open("config.ini", 'r')
     config = ConfigParser()
-    config.read(file_data)
+    with open("config.ini", 'r') as configFile:
+        config.read(configFile)
     
-    config['S1s1'] = {
-        'x1' : f_click[0],
-        'x2' : s_click[0],
-        'y1' : f_click[1],
-        'y2' : s_click[1],
+
+    # Servant offsets
+    Soffsets = {
+        1 : 0,
+        2 : 1, 
+        3 : 2,
     }
 
+    # Skill offsets
+    soffsets = {
+        1 : 0,
+        2 : 1,
+        3 : 2,
+    }
+
+    
+    for i in range(1,4,1): #servant
+        config['Servant {0}'.format(i)] = {}
+      
+        for j in range(1,4,1):  #skills
+            # Calculate de values given the offset
+            values = [f_click[0] , s_click[0], f_click[1], s_click[1]]
+       
+            for value in range(len(values)):
+                values[value] += Soffsets[i] + soffsets[j]
+
+            
+
+            config['Servant {0}'.format(i)]["skill_{0}".format(j)] = ' '.join(str(e) for e in values)
+
+    # Convert the String arrayt of numbers of the configfile to int array
+    # values2 = [int(num) for num in ' '.join(str(e) for e in values).split()]
+    print(config["Servant 1"]["skill_1"])
+
+
+
+            
+           
+
     # Save file
-    file_data = open("config.ini", 'w')
-    config.write(file_data)
+    with open('config.ini', 'w') as configFile:
+        config.write(configFile)
+    
 
     '''
     #create all servant skill sections
