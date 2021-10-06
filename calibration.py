@@ -29,23 +29,27 @@ def calibration():
     config.read("config.ini")
 
     # Servants
-    # cali_servants()
+    #cali_servants()
 
     # NP cards
+    # cali_NP_cards()
 
+    # Attack button 
+    #cali_attack_butt()
 
-    # Attack button and Face cards 
-    # cali_attack_butt()
-
+    # Face cards 
+    cali_face_cards()
 
     # Mystic code 
-    cali_mystic_code()
+    #cali_mystic_code()
 
     # Enemy Servants
     #cali_enemy_servants() 
 
     # Servant skill target 
 
+    # Mystic code Exchange display
+    # cali_exchange_MC()
     
 
     # Save file
@@ -86,6 +90,38 @@ def cali_mystic_code():
             print("Skill_{0} at {1}".format(j,coords))
             config["Mystic code"]["skill_{}".format(j)] = ' '.join(str(e) for e in [coords[0], coords[1], coords[2], coords[3]])
 
+# Method to calibrate exchange mystic code skill
+def cali_exchange_MC():
+    print("\nCalibrating Mystic code exchange")
+    config["Exchange Mystic code"] = {}
+
+    coords = get_box_coords()
+    print("Accept button at: {0}".format(coords))
+    config["Exchange Mystic code"]["accept"] = ' '.join(str(e) for e in [coords[0], coords[1], coords[2], coords[3]])
+
+    for j in range(1,7,1): # All skills
+            coords = get_box_coords()
+            print("Card_{0} at {1}".format(j,coords))
+            config["Exchange Mystic code"]["card_{}".format(j)] = ' '.join(str(e) for e in [coords[0], coords[1], coords[2], coords[3]])
+
+
+# Method to calibrate all face cards 
+def cali_face_cards():
+    print("\nCalibrating Face cards")
+    config["Face cards"] = {}
+    for j in range(1,6,1): # All skills
+            coords = get_box_coords()
+            print("Card_{0} at {1}".format(j,coords))
+            config["Face cards"]["card_{}".format(j)] = ' '.join(str(e) for e in [coords[0], coords[1], coords[2], coords[3]])
+    
+# Method to calibrate all NP cards
+def cali_NP_cards():
+    print("\nCalibrating NP cards")
+    config["NP cards"] = {}
+    for j in range(1,4,1): # All skills
+            coords = get_box_coords()
+            print("Card_{0} at {1}".format(j,coords))
+            config["NP cards"]["card_{}".format(j)] = ' '.join(str(e) for e in [coords[0], coords[1], coords[2], coords[3]])
 
 #Method to get the coords of to given points making a box, returns x1, y1, x2, y2
 def get_box_coords():
@@ -101,4 +137,3 @@ def mouse_coordinate():
         click1[0], click1[1], click2[0], click2[1]
     ))
 
-calibration()
