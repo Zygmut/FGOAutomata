@@ -3,7 +3,7 @@ from configparser import ConfigParser
 import random
 import time
 from pynput.mouse import Button, Controller
-import calibration 
+from calibrationV2 import calibrate 
 
 SKILL_MARGIN = 10
 SPEED = 1
@@ -121,6 +121,7 @@ def target_servant(target):
 
     return True
 
+calibrate("config_2.ini")
 '''
 time.sleep(1)
 for i in range(1,4,1):
@@ -131,7 +132,6 @@ for i in range(1,4,1):
                 time.sleep(2)
 '''
 
-attack(["NP 1", "NP 2", "NP 3"])
 
 
 

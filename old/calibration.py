@@ -137,3 +137,4 @@ def mouse_coordinate():
         click1[0], click1[1], click2[0], click2[1]
     ))
 
+calibration()
