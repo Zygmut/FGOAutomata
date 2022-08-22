@@ -40,11 +40,10 @@ def servant_skills() -> None:
 
 def target_skill() -> None:
     debug("Calibrating target skills")    
-    CONFIG["Target skills"] = {}
     for i in range(3):
         coords = get_box_coords()
         debug(f"Servant {i} at {coords}")
-        CONFIG["Target skills"][f"servant_{i}"] = ' '.join(str(value) for value in coords)
+        CONFIG[f"Servant {i}"]["target_skill"] = ' '.join(str(value) for value in coords)
 
 def enemies() -> None:
     debug("Calibrating enemies")    
@@ -81,6 +80,9 @@ def mystic_code_exchange() -> None:
         debug(f"Servant {i} at {coords}")
         CONFIG["Exchange"][f"servant_{i}"] = ' '.join(str(value) for value in coords)
 
+    debug("Calibrating replace button") 
+    CONFIG["Exchange"]["replace"] = ' '.join(str(value) for value in get_box_coords())
+
 def servant_face_cards() -> None:
     debug("Calibrating Face cards")    
     CONFIG["Face cards"] = {}
@@ -91,15 +93,14 @@ def servant_face_cards() -> None:
      
 def servant_NP() -> None:
     debug("Calibrating NP cards")    
-    CONFIG["NP cards"] = {}
     for i in range(3):
         coords = get_box_coords()
         debug(f"Card {i} at {coords}")
-        CONFIG["NP cards"][f"card_{i}"] = ' '.join(str(value) for value in coords)
+        CONFIG[f"Servant {i}"]["NP"] = ' '.join(str(value) for value in coords)
             
 def calibrate(config_file = CONFIG_FILE):
     calibrating2 = (servant_NP, servant_face_cards, servant_skills, mystic_code, mystic_code_exchange, attack_button, enemies, target_skill)
-    calibrating = (mystic_code, attack_button)
+    calibrating = (mystic_code_exchange, attack_button)
     print("Calibration procedure")    
     CONFIG.read(config_file)
     for procedure in calibrating:

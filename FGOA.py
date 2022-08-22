@@ -1,4 +1,3 @@
-from time import sleep
 from random import randint
 from configparser import ConfigParser
 from pynput.mouse import Button, Controller
@@ -7,10 +6,10 @@ SKILL_MARGIN = 10
 SPEED = 1
 
 CONFIG = ConfigParser()
-CONFIG.read("config_2.ini")
+CONFIG.read("config2.ini")
 MOUSE = Controller()
 
-def load_values(group: str, subgroup: str) -> tuple[int]:
+def load_values(group: str, subgroup: str = "coords") -> tuple[int]:
     return tuple([int(value) for value in CONFIG[group][subgroup].split()])
 
 def is_inside(coords: tuple[int], area: tuple[int]) -> bool:
@@ -44,10 +43,50 @@ def servant_skill(servant: int, skill: int) -> None:
     debug(f"Loaded coords {coords} from {servant = } {skill = }")
     random_click_inside(coords)
 
+def servant_NP(servant: int) -> None:
+    coords = load_values("NP cards", f"card_{servant}")
+    debug(f"Clicked face card at {coords = }")
+    random_click_inside(coords)
+
+def face_card(card: int) -> None:
+    coords = load_values("Face cards", f"card_{card}")
+    debug(f"Clicked face card at {coords = }")
+    random_click_inside(coords)
+
+def mystic_skill(skill: int) -> None:
+    coords = load_values("Mystic code")
+    debug(f"Clicked mystic code at {coords = }")
+    random_click_inside(coords)
+    
+    # click skill
+    coords = load_values("Mystic code", f"skill_{skill}")
+    debug(f"Clicked mystic code skill at {coords = }")
+    random_click_inside(coords)
+
+def exchange(servant_1: int, servant_2: int) -> None:
+
+    pass
+
+def attack() -> None:
+    coords = load_values("Attack button")
+    debug(f"Clicked the attack button at {coords = }")
+    random_click_inside(coords)
+
+def focus_enemy(enemy: int) -> None:
+    coords = load_values("Enemies", f"coord_{enemy}")
+    debug(f"Clicked the {enemy = }")
+    random_click_inside(coords)
+
+def target_skill(servant: int) -> None:
+    coords = load_values(f"Servant {servant}", "target_skill")
+    debug(f"Targeted skill to {servant= }")
+    random_click_inside(coords)
+
+def wait_next_move():
+    pass
+
 def main():
-    for i in range(3):
-        for j in range(3):
-            sleep(SPEED)
-            servant_skill(i,j)
+    pass
+
 if __name__ == "__main__":
     main()

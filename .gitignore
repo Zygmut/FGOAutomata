@@ -1,0 +1,5 @@
+# Calibrating files 
+*.ini
+
+# Pycache
+*.pyc
