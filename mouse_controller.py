@@ -4,7 +4,7 @@ from random import randint
 
 # DEBUG
 DEBUG = True
-def debug(s: str) -> None:
+def __debug(s: str) -> None:
     """Prints output with a custom format if global variable GLOBAL is True
 
     Args:
@@ -27,7 +27,7 @@ def mouse_click(x: int, y: int) -> None:
     # Need to wait for mouse to move
     sleep(0.1)
     mouse.click()
-    debug(f"Clicked at {(x,y)}")
+    __debug(f"Clicked at {(x,y)}")
 
 
 def random_coord_inside(coords: tuple(), offset: int = 0) -> tuple[int]:
@@ -54,7 +54,7 @@ def random_coord_inside(coords: tuple(), offset: int = 0) -> tuple[int]:
 
     x = randint(coords[0] + offset, coords[2] - offset)
     y = randint(coords[1] + offset, coords[3] - offset)
-    debug(f"Random coord generated at {(x,y)} from {coords}")
+    __debug(f"Random coord generated at {(x,y)} from {coords}")
     return (x, y)
 
 
@@ -67,7 +67,7 @@ def random_click_inside(bound: tuple[int]) -> None:
 
     coords = random_coord_inside(bound)
     mouse_click(coords[0], coords[1])
-    debug(f"Clicked at {coords = }")
+    __debug(f"Clicked at {coords = }")
 
 
 def click_around(x: int, y: int, radius: int = 100) -> None:

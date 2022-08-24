@@ -43,7 +43,7 @@ def load_values(group: str, subgroup: str = "coords") -> tuple[int]:
     return tuple([int(value) for value in CONFIG[group][subgroup].split()])
 
 
-def debug(s: str) -> None:
+def __debug(s: str) -> None:
     """Prints output with a custom format if global variable GLOBAL is True
 
     Args:
@@ -75,7 +75,7 @@ def servant_skill(servant: int, skill: int) -> None:
 
     coords = load_values(f"Servant {servant}", f"skill_{skill}")
     random_click_inside(coords)
-    debug(f"Loaded coords {coords} from {servant = } {skill = }")
+    __debug(f"Loaded coords {coords} from {servant = } {skill = }")
 
 
 def servant_NP(servant: int) -> None:
@@ -87,7 +87,7 @@ def servant_NP(servant: int) -> None:
 
     coords = load_values(f"Servant {servant}", "np")
     random_click_inside(coords)
-    debug(f"Clicked NP card of {servant = }")
+    __debug(f"Clicked NP card of {servant = }")
 
 
 def face_card(card: int) -> None:
@@ -99,7 +99,7 @@ def face_card(card: int) -> None:
 
     coords = load_values("Face cards", f"card_{card}")
     random_click_inside(coords)
-    debug(f"Clicked face card")
+    __debug(f"Clicked face card")
 
 
 def mystic_skill(skill: int) -> None:
@@ -111,12 +111,12 @@ def mystic_skill(skill: int) -> None:
 
     coords = load_values("Mystic code")
     random_click_inside(coords)
-    debug(f"Clicked mystic code")
+    __debug(f"Clicked mystic code")
 
     # click skill
     coords = load_values("Mystic code", f"skill_{skill}")
     random_click_inside(coords)
-    debug(f"Clicked mystic code {skill = }")
+    __debug(f"Clicked mystic code {skill = }")
 
 
 def exchange(servant_1: int, servant_2: int) -> None:
@@ -134,7 +134,7 @@ def attack() -> None:
 
     coords = load_values("Attack button")
     random_click_inside(coords)
-    debug(f"Clicked the attack button")
+    __debug(f"Clicked the attack button")
 
 
 def focus_enemy(enemy: int) -> None:
@@ -145,7 +145,7 @@ def focus_enemy(enemy: int) -> None:
     """
     coords = load_values("Enemies", f"coord_{enemy}")
     random_click_inside(coords)
-    debug(f"Clicked the {enemy = }")
+    __debug(f"Clicked the {enemy = }")
 
 
 def target_skill(servant: int) -> None:
@@ -155,7 +155,7 @@ def target_skill(servant: int) -> None:
         servant (int): Index of the servant in the configuration file
     """
     coords = load_values(f"Servant {servant}", "target_skill")
-    debug(f"Targeted skill to {servant = }")
+    __debug(f"Targeted skill to {servant = }")
     random_click_inside(coords)
 
 
