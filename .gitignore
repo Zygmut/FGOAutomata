@@ -3,3 +3,9 @@
 
 # Pycache
 *.pyc
+
+# tets 
+farm.py
+
+#
+old/*

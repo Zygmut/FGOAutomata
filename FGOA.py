@@ -1,92 +1,220 @@
-from random import randint
+from random import randint, random
 from configparser import ConfigParser
-from pynput.mouse import Button, Controller
+from time import sleep
+import mouse
 
-SKILL_MARGIN = 10
-SPEED = 1
-
+DEBUG = False
 CONFIG = ConfigParser()
-CONFIG.read("config2.ini")
-MOUSE = Controller()
+
+
+def read_config(config_file: str) -> None:
+    """Reads config file located in the same or subsequent directories
+
+    Args:
+        config_file (str): Config file name/path
+    """
+
+    CONFIG.read(config_file)
+
+
+def wait(time: float, min: float = 0.1, max: float = 0.5) -> None:
+    """Halts program for some amout of time between [min, max]
+
+    Args:
+        time (float): Default time
+        min (float, optional): Minimum time delay to add. Defaults to 0.1.
+        max (float, optional): Maximum time delay to add. Defaults to 0.5.
+    """
+
+    sleep(time + (min + (max - min) * random()))
+
 
 def load_values(group: str, subgroup: str = "coords") -> tuple[int]:
+    """Loads values from the configuration
+
+    Args:
+        group (str): Parent node
+        subgroup (str, optional): Child node . Defaults to "coords".
+
+    Returns:
+        tuple[int]: All the values returned from the config
+    """
+
     return tuple([int(value) for value in CONFIG[group][subgroup].split()])
 
-def is_inside(coords: tuple[int], area: tuple[int]) -> bool:
-    return (area[0]<coords[0]<area[2]) and (area[1]<coords[1]<area[3])
 
-#DEBUG 
-DEBUG = True
 def debug(s: str) -> None:
-    if DEBUG: print(f"[DEBUG] {s}")
+    """Prints output with a custom format if global variable GLOBAL is True
+
+    Args:
+        s (str): String to output to stdout
+    """
+
+    if DEBUG:
+        print(f"[DEBUG] {s}")
+
+
+def set_debug(mode: bool) -> None:
+    """Set global variable DEBUG to mode
+
+    Args:
+        mode (bool): If True all commands will show useful data regarding its use
+    """
+
+    global DEBUG
+    DEBUG = mode
+
 
 def mouse_click(x: int, y: int) -> None:
-    MOUSE.position = (x,y)
-    MOUSE.move(1,0)
-    MOUSE.move(-1,0)
-    MOUSE.press(Button.left)
-    MOUSE.release(Button.left)
-    debug(f"Clicked at {(x,y)}") 
+    """Simulate mouse click at (x,y) coordinates
 
-def random_coord_inside(values: tuple()) -> tuple[int]:
-    x = randint(values[0]+SKILL_MARGIN, values[2]-SKILL_MARGIN)
-    y = randint(values[1]+SKILL_MARGIN, values[3]-SKILL_MARGIN)
-    debug(f"Random coord generated at {(x,y)} from {values}. is inside? {is_inside((x,y), values)}")
-    return (x,y)
+    Args:
+        x (int): Absolute x coordinate
+        y (int): Absolute y coordinate
+    """
 
-def random_click_inside(values: tuple()) -> None:
-    coords = random_coord_inside(values)
+    mouse.move(x, y)
+
+    # Need to wait for mouse to move
+    sleep(0.1)
+    mouse.click()
+    debug(f"Clicked at {(x,y)}")
+
+
+def random_coord_inside(coords: tuple(), offset: int = 0) -> tuple[int]:
+    """Generates a random coordinate inside some values that represent the boundaries of a square.
+
+    Args:
+        coords (tuple): Coordinates that represent the boundaries of a square e.i (x1, y1, x2, y2)
+        offset (int, optional): Margin. Defaults to 0.
+
+    Raises:
+        ValueError: If offset is negative or less than the diameter of the boundaries
+
+    Returns:
+        tuple[int]: Random coordinate inside boundaries
+    """
+
+    if offset <= 0:
+        print("Offset cannot be less than 0")
+        raise ValueError
+
+    if offset < (coords[0] - coords[1]) or (coords[1] - coords[3]):
+        print("Offset is greater than the difference of coordinates")
+        raise ValueError
+
+    x = randint(coords[0] + offset, coords[2] - offset)
+    y = randint(coords[1] + offset, coords[3] - offset)
+    debug(f"Random coord generated at {(x,y)} from {coords}")
+    return (x, y)
+
+
+def random_click_inside(bound: tuple()) -> None:
+    """Clicks at a random coordinate inside some boundaries
+
+    Args:
+        bound (tuple): Boundaries of the click e.i (x1, y1, x2, y2)
+    """
+
+    coords = random_coord_inside(bound)
     mouse_click(coords[0], coords[1])
+    debug(f"Clicked at {coords = }")
+
 
 def servant_skill(servant: int, skill: int) -> None:
+    """Uses a servant skill
+
+    Args:
+        servant (int): Index of the servant in the configuration file
+        skill (int): Index of the skill in the configuration file
+    """
+
     coords = load_values(f"Servant {servant}", f"skill_{skill}")
-    debug(f"Loaded coords {coords} from {servant = } {skill = }")
     random_click_inside(coords)
+    debug(f"Loaded coords {coords} from {servant = } {skill = }")
+
 
 def servant_NP(servant: int) -> None:
-    coords = load_values("NP cards", f"card_{servant}")
-    debug(f"Clicked face card at {coords = }")
+    """Uses a servant NP
+
+    Args:
+        servant (int): Index of the servant in the configuration file
+    """
+
+    coords = load_values(f"Servant {servant}", "np")
     random_click_inside(coords)
+    debug(f"Clicked NP card of {servant = }")
+
 
 def face_card(card: int) -> None:
+    """Clicks a given face card
+
+    Args:
+        card (int): Index of the card in the configuration file
+    """
+
     coords = load_values("Face cards", f"card_{card}")
-    debug(f"Clicked face card at {coords = }")
     random_click_inside(coords)
+    debug(f"Clicked face card")
+
 
 def mystic_skill(skill: int) -> None:
+    """Uses a mystic code skill
+
+    Args:
+        skill (int): Index of the skill in the configuration file
+    """
+
     coords = load_values("Mystic code")
-    debug(f"Clicked mystic code at {coords = }")
     random_click_inside(coords)
-    
+    debug(f"Clicked mystic code")
+
     # click skill
     coords = load_values("Mystic code", f"skill_{skill}")
-    debug(f"Clicked mystic code skill at {coords = }")
     random_click_inside(coords)
+    debug(f"Clicked mystic code {skill = }")
+
 
 def exchange(servant_1: int, servant_2: int) -> None:
+    """Exchanges two servants
+    !!NOT IMPLEMENTED YET
 
-    pass
+    Args:
+        servant_1 (int): Index of the servant position in the exchange menu in the configuration file
+        servant_2 (int): Index of the servant position in the exchange menu in the configuration file
+    """
+
 
 def attack() -> None:
+    """Clicks the attack button"""
+
     coords = load_values("Attack button")
-    debug(f"Clicked the attack button at {coords = }")
     random_click_inside(coords)
+    debug(f"Clicked the attack button")
+
 
 def focus_enemy(enemy: int) -> None:
+    """Clicks on an enemy
+
+    Args:
+        enemy (int): Index of the enemy in the configuration file
+    """
     coords = load_values("Enemies", f"coord_{enemy}")
-    debug(f"Clicked the {enemy = }")
     random_click_inside(coords)
+    debug(f"Clicked the {enemy = }")
+
 
 def target_skill(servant: int) -> None:
+    """Clicks on a servant in the target menu
+
+    Args:
+        servant (int): Index of the servant in the configuration file
+    """
     coords = load_values(f"Servant {servant}", "target_skill")
-    debug(f"Targeted skill to {servant= }")
+    debug(f"Targeted skill to {servant = }")
     random_click_inside(coords)
 
+
 def wait_next_move():
+    """Waits until the next possible time to act NOT IMPLEMENTED YET"""
     pass
-
-def main():
-    pass
-
-if __name__ == "__main__":
-    main()
