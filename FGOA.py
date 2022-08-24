@@ -95,7 +95,7 @@ def random_coord_inside(coords: tuple(), offset: int = 0) -> tuple[int]:
         tuple[int]: Random coordinate inside boundaries
     """
 
-    if offset <= 0:
+    if offset < 0:
         print("Offset cannot be less than 0")
         raise ValueError
 
