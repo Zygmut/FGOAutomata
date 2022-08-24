@@ -3,3 +3,6 @@
 
 # tets
 farm.py
+
+# Pycache stuff
+*.pyc
