@@ -4,6 +4,8 @@ from random import randint
 
 # DEBUG
 DEBUG = True
+
+
 def __debug(s: str) -> None:
     """Prints output with a custom format if global variable GLOBAL is True
 
@@ -12,7 +14,8 @@ def __debug(s: str) -> None:
     """
 
     if DEBUG:
-        print(f"[DEBUG] {s}")
+        print(f"[MC DEBUG] {s}")
+
 
 def mouse_click(x: int, y: int) -> None:
     """Simulate mouse click at (x,y) coordinates
@@ -67,7 +70,6 @@ def random_click_inside(bound: tuple[int]) -> None:
 
     coords = random_coord_inside(bound)
     mouse_click(coords[0], coords[1])
-    __debug(f"Clicked at {coords = }")
 
 
 def click_around(x: int, y: int, radius: int = 100) -> None:
@@ -78,4 +80,4 @@ def click_around(x: int, y: int, radius: int = 100) -> None:
         y (int): Absolute y coordinate
         radius (int, optional): Dimension of the space created to click. Defaults to 100.
     """
-    random_click_inside((x-radius, y+radius, x+radius, y-radius))
+    random_click_inside((x - radius, y + radius, x + radius, y - radius))

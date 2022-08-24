@@ -3,6 +3,11 @@ from configparser import ConfigParser
 from time import sleep
 from mouse_controller import *
 
+# Image recognition
+import cv2
+from PIL import ImageGrab
+import numpy as np
+
 DEBUG = False
 CONFIG = ConfigParser()
 
@@ -17,7 +22,7 @@ def read_config(config_file: str) -> None:
     CONFIG.read(config_file)
 
 
-def wait(time: float, min: float = 0.1, max: float = 0.5) -> None:
+def wait(time: float = 0, min: float = 0.1, max: float = 0.5) -> None:
     """Halts program for some amout of time between [min, max]
 
     Args:
@@ -29,7 +34,7 @@ def wait(time: float, min: float = 0.1, max: float = 0.5) -> None:
     sleep(time + (min + (max - min) * random()))
 
 
-def load_values(group: str, subgroup: str = "coords") -> tuple[int]:
+def __load_values(group: str, subgroup: str = "coords") -> tuple[int]:
     """Loads values from the configuration
 
     Args:
@@ -51,7 +56,7 @@ def __debug(s: str) -> None:
     """
 
     if DEBUG:
-        print(f"[DEBUG] {s}")
+        print(f"[FGOA DEBUG] {s}")
 
 
 def set_debug(mode: bool) -> None:
@@ -73,9 +78,8 @@ def servant_skill(servant: int, skill: int) -> None:
         skill (int): Index of the skill in the configuration file
     """
 
-    coords = load_values(f"Servant {servant}", f"skill_{skill}")
-    random_click_inside(coords)
-    __debug(f"Loaded coords {coords} from {servant = } {skill = }")
+    random_click_inside(__load_values(f"Servant {servant}", f"skill_{skill}"))
+    __debug(f"Clicked {skill = } from {servant = }")
 
 
 def servant_NP(servant: int) -> None:
@@ -85,8 +89,7 @@ def servant_NP(servant: int) -> None:
         servant (int): Index of the servant in the configuration file
     """
 
-    coords = load_values(f"Servant {servant}", "np")
-    random_click_inside(coords)
+    random_click_inside(__load_values(f"Servant {servant}", "np"))
     __debug(f"Clicked NP card of {servant = }")
 
 
@@ -97,54 +100,63 @@ def face_card(card: int) -> None:
         card (int): Index of the card in the configuration file
     """
 
-    coords = load_values("Face cards", f"card_{card}")
-    random_click_inside(coords)
+    random_click_inside(__load_values("Face cards", f"card_{card}"))
     __debug(f"Clicked face card")
 
 
 def mystic_skill(skill: int) -> None:
     """Uses a mystic code skill
+    TODO: test
 
     Args:
         skill (int): Index of the skill in the configuration file
     """
 
-    coords = load_values("Mystic code")
-    random_click_inside(coords)
+    random_click_inside(__load_values("Mystic code"))
     __debug(f"Clicked mystic code")
 
+    wait()
+
     # click skill
-    coords = load_values("Mystic code", f"skill_{skill}")
-    random_click_inside(coords)
+    random_click_inside(__load_values("Mystic code", f"skill_{skill}"))
     __debug(f"Clicked mystic code {skill = }")
 
 
 def exchange(servant_1: int, servant_2: int) -> None:
     """Exchanges two servants
-    !!NOT IMPLEMENTED YET
+    TODO: test
 
     Args:
         servant_1 (int): Index of the servant position in the exchange menu in the configuration file
         servant_2 (int): Index of the servant position in the exchange menu in the configuration file
     """
 
+    random_click_inside(__load_values("Exchange", f"servant_{servant_1}"))
+    __debug(f"Clicked {servant_1 = } in the exchange menu")
+    wait()
+
+    random_click_inside(__load_values("Exchange", f"servant_{servant_2}"))
+    __debug(f"Clicked {servant_2 = } in the exchange menu")
+    wait()
+
+    random_click_inside(__load_values("Exchange", "replace"))
+    __debug(f"Clicked the replace button")
+
 
 def attack() -> None:
     """Clicks the attack button"""
 
-    coords = load_values("Attack button")
-    random_click_inside(coords)
+    random_click_inside(__load_values("Attack button"))
     __debug(f"Clicked the attack button")
 
 
 def focus_enemy(enemy: int) -> None:
     """Clicks on an enemy
-
+    TODO: test
     Args:
         enemy (int): Index of the enemy in the configuration file
     """
-    coords = load_values("Enemies", f"coord_{enemy}")
-    random_click_inside(coords)
+    random_click_inside(__load_values("Enemies", f"coord_{enemy}"))
     __debug(f"Clicked the {enemy = }")
 
 
@@ -154,11 +166,21 @@ def target_skill(servant: int) -> None:
     Args:
         servant (int): Index of the servant in the configuration file
     """
-    coords = load_values(f"Servant {servant}", "target_skill")
+    random_click_inside(__load_values(f"Servant {servant}", "target_skill"))
     __debug(f"Targeted skill to {servant = }")
-    random_click_inside(coords)
 
 
 def wait_next_move():
     """Waits until the next possible time to act NOT IMPLEMENTED YET"""
-    pass
+
+    attack_img = cv2.imread('images/menu.png', cv2.IMREAD_GRAYSCALE)
+
+    coeff = 0
+
+    # Image should be at 20 FPS
+    while coeff < 0.9:
+        screenshot = cv2.cvtColor(np.array(ImageGrab.grab()), cv2.COLOR_BGR2GRAY)
+        result = cv2.matchTemplate(screenshot, attack_img, cv2.TM_CCOEFF_NORMED)
+        _, coeff, _, _ = cv2.minMaxLoc(result)
+
+    __debug("Menu found")
