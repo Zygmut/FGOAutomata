@@ -1,11 +1,5 @@
-# Calibrating files 
+# Calibration files
 *.ini
 
-# Pycache
-*.pyc
-
-# tets 
+# tets
 farm.py
-
-#
-old/*
