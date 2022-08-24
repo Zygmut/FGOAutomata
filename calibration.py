@@ -7,8 +7,6 @@ CONFIG_FILE = "config_laptop.ini"
 
 # DEBUG
 DEBUG = True
-
-
 def debug(s: str) -> None:
     if DEBUG:
         print(f"[DEBUG] {s}")
