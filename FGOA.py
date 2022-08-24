@@ -99,7 +99,7 @@ def random_coord_inside(coords: tuple(), offset: int = 0) -> tuple[int]:
         print("Offset cannot be less than 0")
         raise ValueError
 
-    if offset > (coords[0] - coords[1]) or (coords[1] - coords[3]):
+    if offset > ((abs(coords[0] - coords[1])) or (abs(coords[1] - coords[3]))):
         print("Offset is greater than the difference of coordinates")
         raise ValueError
 
