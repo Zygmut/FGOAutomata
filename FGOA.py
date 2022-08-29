@@ -200,7 +200,7 @@ def locate_on_screen(img_path: str, coeff: float = 0.9) -> tuple[int] | None:
 def wait_next_move() -> None:
     """Waits until the next possible time to act SOON TO BE DEPRECATED"""
 
-    attack_img = cv2.imread("images/menu.png", cv2.IMREAD_GRAYSCALE)
+    attack_img = cv2.imread("images/combat/menu.png", cv2.IMREAD_GRAYSCALE)
 
     coeff = 0
 

@@ -1,9 +1,6 @@
 # Calibration files
 *.ini
 
-# tets
-farm.py
-
 # Pycache stuff
 *.pyc
 .vscode/settings.json
