@@ -6,3 +6,4 @@ farm.py
 
 # Pycache stuff
 *.pyc
+.vscode/settings.json
