@@ -1,7 +1,7 @@
 from random import random
 from configparser import ConfigParser
 from time import sleep
-from mouse_controller import *
+from mouse_controller import random_click_inside
 
 # Image recognition
 import cv2
@@ -63,7 +63,8 @@ def set_debug(mode: bool) -> None:
     """Set global variable DEBUG to mode
 
     Args:
-        mode (bool): If True all commands will show useful data regarding its use
+        mode (bool): If True all commands will show useful data regarding its
+        use
     """
 
     global DEBUG
@@ -101,7 +102,7 @@ def face_card(card: int) -> None:
     """
 
     random_click_inside(__load_values("Face cards", f"card_{card}"))
-    __debug(f"Clicked face card")
+    __debug("Clicked face card")
 
 
 def mystic_skill(skill: int) -> None:
@@ -113,7 +114,7 @@ def mystic_skill(skill: int) -> None:
     """
 
     random_click_inside(__load_values("Mystic code"))
-    __debug(f"Clicked mystic code")
+    __debug("Clicked mystic code")
 
     wait()
 
@@ -127,8 +128,10 @@ def exchange(servant_1: int, servant_2: int) -> None:
     TODO: test
 
     Args:
-        servant_1 (int): Index of the servant position in the exchange menu in the configuration file
-        servant_2 (int): Index of the servant position in the exchange menu in the configuration file
+        servant_1 (int): Index of the servant position in the exchange menu in
+        the configuration file
+        servant_2 (int): Index of the servant position in the exchange menu in
+        the configuration file
     """
 
     random_click_inside(__load_values("Exchange", f"servant_{servant_1}"))
@@ -140,14 +143,14 @@ def exchange(servant_1: int, servant_2: int) -> None:
     wait()
 
     random_click_inside(__load_values("Exchange", "replace"))
-    __debug(f"Clicked the replace button")
+    __debug("Clicked the replace button")
 
 
 def attack() -> None:
     """Clicks the attack button"""
 
     random_click_inside(__load_values("Attack button"))
-    __debug(f"Clicked the attack button")
+    __debug("Clicked the attack button")
 
 
 def focus_enemy(enemy: int) -> None:
@@ -170,10 +173,34 @@ def target_skill(servant: int) -> None:
     __debug(f"Targeted skill to {servant = }")
 
 
-def wait_next_move():
-    """Waits until the next possible time to act NOT IMPLEMENTED YET"""
+def locate_on_screen(img_path: str, coeff: float = 0.9) -> tuple[int] | None:
+    """Generic method that detects if an image is visible onscreen
 
-    attack_img = cv2.imread('images/menu.png', cv2.IMREAD_GRAYSCALE)
+    Args:
+        img_path (str): Path of the iamge to locate
+        coeff (float, optional): Coefficient of validation. Defaults to 0.9.
+
+    Returns:
+        tuple[int] | None: Tuple containing the location of the image or None
+        if not acquired
+    """
+
+    attack_img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+
+    screenshot = cv2.cvtColor(np.array(ImageGrab.grab()), cv2.COLOR_BGR2GRAY)
+    result = cv2.matchTemplate(screenshot, attack_img, cv2.TM_CCOEFF_NORMED)
+    _, disp_coeff, _, max_loc = cv2.minMaxLoc(result)
+
+    if disp_coeff >= coeff:
+        return max_loc
+    else:
+        return None
+
+
+def wait_next_move() -> None:
+    """Waits until the next possible time to act SOON TO BE DEPRECATED"""
+
+    attack_img = cv2.imread("images/menu.png", cv2.IMREAD_GRAYSCALE)
 
     coeff = 0
 
