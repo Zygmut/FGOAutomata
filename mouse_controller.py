@@ -57,18 +57,27 @@ def random_coord_inside(coords: tuple(), offset: int = 10) -> tuple[int]:
     if offset > ((abs(coords[0] - coords[1])) or (abs(coords[1] - coords[3]))):
         print("Offset is greater than the difference of coordinates")
         raise ValueError
-
+    print(coords)
     x = randint(coords[0] + offset, coords[2] - offset)
-    y = randint(coords[1] + offset, coords[3] - offset)
+
+    if coords[0] + offset < coords[2] - offset:
+        x = randint(coords[0] + offset, coords[2] - offset)
+    else:
+        x = randint(coords[2] - offset, coords[0] + offset)
+
+    if coords[1] + offset < coords[3] - offset:
+        y = randint(coords[1] + offset, coords[3] - offset)
+    else:
+        y = randint(coords[3] - offset, coords[1] + offset)
     __debug(f"Random coord generated at {(x,y)} from {coords}")
     return (x, y)
 
 
-def random_click_inside(bound: tuple[int]) -> None:
+def random_click_inside(bound: tuple[int, int, int, int]) -> None:
     """Clicks at a random coordinate inside some boundaries
 
     Args:
-        bound (tuple[int]): Boundaries of the click e.i (x1, y1, x2, y2)
+        bound (tuple[int,int,int,int]): Boundaries of the click e.i (x1, y1, x2, y2)
     """
 
     coords = random_coord_inside(bound)
