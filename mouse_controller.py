@@ -3,7 +3,7 @@ from time import sleep
 from random import randint
 
 # DEBUG
-DEBUG = True
+DEBUG = False
 
 
 def __debug(s: str) -> None:
@@ -33,7 +33,7 @@ def mouse_click(x: int, y: int) -> None:
     __debug(f"Clicked at {(x,y)}")
 
 
-def random_coord_inside(coords: tuple(), offset: int = 0) -> tuple[int]:
+def random_coord_inside(coords: tuple(), offset: int = 10) -> tuple[int]:
     """Generates a random coordinate inside some values that represent the boundaries of a square.
 
     Args:
