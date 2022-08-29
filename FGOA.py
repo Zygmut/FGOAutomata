@@ -185,12 +185,11 @@ def locate_on_screen(img_path: str, coeff: float = 0.9) -> tuple[int] | None:
         if not acquired
     """
 
-    attack_img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+    img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
 
     screenshot = cv2.cvtColor(np.array(ImageGrab.grab()), cv2.COLOR_BGR2GRAY)
-    result = cv2.matchTemplate(screenshot, attack_img, cv2.TM_CCOEFF_NORMED)
+    result = cv2.matchTemplate(screenshot, img, cv2.TM_CCOEFF_NORMED)
     _, disp_coeff, _, max_loc = cv2.minMaxLoc(result)
-
     if disp_coeff >= coeff:
         return max_loc
     else:
