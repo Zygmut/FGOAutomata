@@ -34,14 +34,17 @@ def mouse_click(x: int, y: int) -> None:
 
 
 def random_coord_inside(coords: tuple(), offset: int = 10) -> tuple[int]:
-    """Generates a random coordinate inside some values that represent the boundaries of a square.
+    """Generates a random coordinate inside some values that represent the
+    boundaries of a square.
 
     Args:
-        coords (tuple): Coordinates that represent the boundaries of a square e.i (x1, y1, x2, y2)
+        coords (tuple): Coordinates that represent the boundaries of a square
+        e.i (x1, y1, x2, y2)
         offset (int, optional): Margin. Defaults to 0.
 
     Raises:
-        ValueError: If offset is negative or less than the diameter of the boundaries
+        ValueError: If offset is negative or less than the diameter of the
+        boundaries
 
     Returns:
         tuple[int]: Random coordinate inside boundaries
@@ -78,6 +81,7 @@ def click_around(x: int, y: int, radius: int = 100) -> None:
     Args:
         x (int): Absolute x coordinate
         y (int): Absolute y coordinate
-        radius (int, optional): Dimension of the space created to click. Defaults to 100.
+        radius (int, optional): Dimension of the space created to click.
+        Defaults to 100.
     """
     random_click_inside((x - radius, y + radius, x + radius, y - radius))
