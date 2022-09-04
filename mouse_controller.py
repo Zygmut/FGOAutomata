@@ -1,6 +1,8 @@
-import mouse
 from time import sleep
 from random import randint
+from pynput.mouse import Button, Controller
+
+mouse = Controller()
 
 # DEBUG
 DEBUG = False
@@ -25,11 +27,9 @@ def mouse_click(x: int, y: int) -> None:
         y (int): Absolute y coordinate
     """
 
-    mouse.move(x, y)
-
-    # Need to wait for mouse to move
+    mouse.position = (x,y) 
     sleep(0.1)
-    mouse.click()
+    mouse.click(Button.left)
     __debug(f"Clicked at {(x,y)}")
 
 
@@ -57,15 +57,13 @@ def random_coord_inside(coords: tuple(), offset: int = 10) -> tuple[int]:
     if offset > ((abs(coords[0] - coords[1])) or (abs(coords[1] - coords[3]))):
         print("Offset is greater than the difference of coordinates")
         raise ValueError
-    print(coords)
-    x = randint(coords[0] + offset, coords[2] - offset)
 
-    if coords[0] + offset < coords[2] - offset:
+    if (coords[0] + offset) < (coords[2] - offset):
         x = randint(coords[0] + offset, coords[2] - offset)
     else:
         x = randint(coords[2] - offset, coords[0] + offset)
 
-    if coords[1] + offset < coords[3] - offset:
+    if (coords[1] + offset) < (coords[3] - offset):
         y = randint(coords[1] + offset, coords[3] - offset)
     else:
         y = randint(coords[3] - offset, coords[1] + offset)
