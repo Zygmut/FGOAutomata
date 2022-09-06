@@ -8,7 +8,7 @@ mouse = Controller()
 DEBUG = False
 
 
-def __debug(s: str) -> None:
+def __debug(string: str) -> None:
     """Prints output with a custom format if global variable GLOBAL is True
 
     Args:
@@ -16,10 +16,10 @@ def __debug(s: str) -> None:
     """
 
     if DEBUG:
-        print(f"[MC DEBUG] {s}")
+        print(f"[MC DEBUG] {string}")
 
 
-def mouse_click(x: int, y: int) -> None:
+def mouse_click(x_coord: int, y_coord: int) -> None:
     """Simulate mouse click at (x,y) coordinates
 
     Args:
@@ -27,13 +27,15 @@ def mouse_click(x: int, y: int) -> None:
         y (int): Absolute y coordinate
     """
 
-    mouse.position = (x,y) 
+    mouse.position = (x_coord, y_coord)
     sleep(0.1)
     mouse.click(Button.left)
-    __debug(f"Clicked at {(x,y)}")
+    __debug(f"Clicked at {(x_coord,y_coord)}")
 
 
-def random_coord_inside(coords: tuple(), offset: int = 10) -> tuple[int]:
+def random_coord_inside(
+    coords: tuple[int, int, int, int], offset: int = 10
+) -> tuple[int, int]:
     """Generates a random coordinate inside some values that represent the
     boundaries of a square.
 
@@ -82,7 +84,7 @@ def random_click_inside(bound: tuple[int, int, int, int]) -> None:
     mouse_click(coords[0], coords[1])
 
 
-def click_around(x: int, y: int, radius: int = 100) -> None:
+def click_around(x_coord: int, y_coord: int, radius: int = 100) -> None:
     """Clicks around the point (x,y)
 
     Args:
@@ -91,4 +93,6 @@ def click_around(x: int, y: int, radius: int = 100) -> None:
         radius (int, optional): Dimension of the space created to click.
         Defaults to 100.
     """
-    random_click_inside((x - radius, y + radius, x + radius, y - radius))
+    random_click_inside(
+        (x_coord - radius, y_coord + radius, x_coord + radius, y_coord - radius)
+    )

@@ -1,12 +1,11 @@
 from random import random
 from configparser import ConfigParser
 from time import sleep
-from mouse_controller import random_click_inside
-
-# Image recognition
-import cv2
 from PIL import ImageGrab
 import numpy as np
+import cv2
+
+from mouse_controller import random_click_inside
 
 DEBUG = False
 CONFIG = ConfigParser()
@@ -22,7 +21,7 @@ def read_config(config_file: str) -> None:
     CONFIG.read(config_file)
 
 
-def wait(time: float = 0, min: float = 0.1, max: float = 0.5) -> None:
+def wait(time: float = 0, min_val: float = 0.1, max_val: float = 0.5) -> None:
     """Halts program for some amout of time between [min, max]
 
     Args:
@@ -31,10 +30,10 @@ def wait(time: float = 0, min: float = 0.1, max: float = 0.5) -> None:
         max (float, optional): Maximum time delay to add. Defaults to 0.5.
     """
 
-    sleep(time + (min + (max - min) * random()))
+    sleep(time + (min_val + (max_val - min_val) * random()))
 
 
-def __load_values(group: str, subgroup: str = "coords") -> tuple[int]:
+def __load_values(group: str, subgroup: str = "coords") -> tuple[int, int, int, int]:
     """Loads values from the configuration
 
     Args:
@@ -48,7 +47,7 @@ def __load_values(group: str, subgroup: str = "coords") -> tuple[int]:
     return tuple([int(value) for value in CONFIG[group][subgroup].split()])
 
 
-def __debug(s: str) -> None:
+def __debug(string: str) -> None:
     """Prints output with a custom format if global variable GLOBAL is True
 
     Args:
@@ -56,7 +55,7 @@ def __debug(s: str) -> None:
     """
 
     if DEBUG:
-        print(f"[FGOA DEBUG] {s}")
+        print(f"[FGOA DEBUG] {string}")
 
 
 def set_debug(mode: bool) -> None:
@@ -83,7 +82,7 @@ def servant_skill(servant: int, skill: int) -> None:
     __debug(f"Clicked {skill = } from {servant = }")
 
 
-def servant_NP(servant: int) -> None:
+def servant_np(servant: int) -> None:
     """Uses a servant NP
 
     Args:
