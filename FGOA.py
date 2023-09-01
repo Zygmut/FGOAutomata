@@ -19,9 +19,6 @@ logging.basicConfig(
 )
 
 
-
-
-
 def wait(time: float = 0, min_val: float = 0.1, max_val: float = 0.5) -> None:
     """Halts program for some amout of time between [min, max]
 
@@ -219,7 +216,8 @@ def run_battle(
 
         print(f"Run {run_num} used {elapsed_time} seconds")
         print(
-            f"Average time for each run = {sum(run_times)/len(run_times):.2f}", end="\n\n"
+            f"Average time for each run = {sum(run_times)/len(run_times):.2f}",
+            end="\n\n",
         )
 
     return run_times
