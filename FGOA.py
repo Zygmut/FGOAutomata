@@ -2,23 +2,24 @@ from random import random
 from configparser import ConfigParser
 from time import sleep
 from PIL import ImageGrab
+from typing import Callable
 import numpy as np
 import cv2
+import time
+import logging
 
 from mouse_controller import random_click_inside
 
-DEBUG = False
 CONFIG = ConfigParser()
 
+logging.basicConfig(
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="[FGOA %(levelname)s] %(message)s ",
+)
 
-def read_config(config_file: str) -> None:
-    """Reads config file located in the same or subsequent directories
 
-    Args:
-        config_file (str): Config file name/path
-    """
 
-    CONFIG.read(config_file)
 
 
 def wait(time: float = 0, min_val: float = 0.1, max_val: float = 0.5) -> None:
@@ -44,30 +45,7 @@ def __load_values(group: str, subgroup: str = "coords") -> tuple[int, int, int, 
         tuple[int]: All the values returned from the config
     """
 
-    return tuple([int(value) for value in CONFIG[group][subgroup].split()])
-
-
-def __debug(string: str) -> None:
-    """Prints output with a custom format if global variable GLOBAL is True
-
-    Args:
-        s (str): String to output to stdout
-    """
-
-    if DEBUG:
-        print(f"[FGOA DEBUG] {string}")
-
-
-def set_debug(mode: bool) -> None:
-    """Set global variable DEBUG to mode
-
-    Args:
-        mode (bool): If True all commands will show useful data regarding its
-        use
-    """
-
-    global DEBUG
-    DEBUG = mode
+    return tuple(map(int, CONFIG[group][subgroup].split()))
 
 
 def servant_skill(servant: int, skill: int) -> None:
@@ -79,7 +57,7 @@ def servant_skill(servant: int, skill: int) -> None:
     """
 
     random_click_inside(__load_values(f"Servant {servant}", f"skill_{skill}"))
-    __debug(f"Clicked {skill = } from {servant = }")
+    logging.debug(f"Clicked {skill = } from {servant = }")
 
 
 def servant_np(servant: int) -> None:
@@ -90,7 +68,7 @@ def servant_np(servant: int) -> None:
     """
 
     random_click_inside(__load_values(f"Servant {servant}", "np"))
-    __debug(f"Clicked NP card of {servant = }")
+    logging.debug(f"Clicked NP card of {servant = }")
 
 
 def face_card(card: int) -> None:
@@ -101,7 +79,7 @@ def face_card(card: int) -> None:
     """
 
     random_click_inside(__load_values("Face cards", f"card_{card}"))
-    __debug("Clicked face card")
+    logging.debug(f"Clicked face {card = }")
 
 
 def mystic_skill(skill: int) -> None:
@@ -113,13 +91,13 @@ def mystic_skill(skill: int) -> None:
     """
 
     random_click_inside(__load_values("Mystic code"))
-    __debug("Clicked mystic code")
+    logging.debug("Clicked mystic code")
 
     wait()
 
     # click skill
     random_click_inside(__load_values("Mystic code", f"skill_{skill}"))
-    __debug(f"Clicked mystic code {skill = }")
+    logging.debug(f"Clicked mystic code {skill = }")
 
 
 def exchange(servant_1: int, servant_2: int) -> None:
@@ -134,22 +112,22 @@ def exchange(servant_1: int, servant_2: int) -> None:
     """
 
     random_click_inside(__load_values("Exchange", f"servant_{servant_1}"))
-    __debug(f"Clicked {servant_1 = } in the exchange menu")
+    logging.debug(f"Clicked {servant_1 = } in the exchange menu")
     wait()
 
     random_click_inside(__load_values("Exchange", f"servant_{servant_2}"))
-    __debug(f"Clicked {servant_2 = } in the exchange menu")
+    logging.debug(f"Clicked {servant_2 = } in the exchange menu")
     wait()
 
     random_click_inside(__load_values("Exchange", "replace"))
-    __debug("Clicked the replace button")
+    logging.debug("Clicked the replace button")
 
 
 def attack() -> None:
     """Clicks the attack button"""
 
     random_click_inside(__load_values("Attack button"))
-    __debug("Clicked the attack button")
+    logging.debug("Clicked the attack button")
 
 
 def focus_enemy(enemy: int) -> None:
@@ -159,7 +137,7 @@ def focus_enemy(enemy: int) -> None:
         enemy (int): Index of the enemy in the configuration file
     """
     random_click_inside(__load_values("Enemies", f"coord_{enemy}"))
-    __debug(f"Clicked the {enemy = }")
+    logging.debug(f"Clicked the {enemy = }")
 
 
 def target_skill(servant: int) -> None:
@@ -169,7 +147,7 @@ def target_skill(servant: int) -> None:
         servant (int): Index of the servant in the configuration file
     """
     random_click_inside(__load_values(f"Servant {servant}", "target_skill"))
-    __debug(f"Targeted skill to {servant = }")
+    logging.debug(f"Targeted skill to {servant = }")
 
 
 def locate_on_screen(img_path: str, coeff: float = 0.9) -> tuple[int] | None:
@@ -195,7 +173,7 @@ def locate_on_screen(img_path: str, coeff: float = 0.9) -> tuple[int] | None:
         return None
 
 
-def wait_next_move() -> None:
+def wait_next_move(min_coeff=0.9) -> None:
     """Waits until the next possible time to act SOON TO BE DEPRECATED"""
 
     attack_img = cv2.imread("images/combat/menu.png", cv2.IMREAD_GRAYSCALE)
@@ -203,9 +181,45 @@ def wait_next_move() -> None:
     coeff = 0
 
     # Image should be at 20 FPS
-    while coeff < 0.9:
+    while coeff < min_coeff:
         screenshot = cv2.cvtColor(np.array(ImageGrab.grab()), cv2.COLOR_BGR2GRAY)
         result = cv2.matchTemplate(screenshot, attack_img, cv2.TM_CCOEFF_NORMED)
         _, coeff, _, _ = cv2.minMaxLoc(result)
 
-    __debug("Menu found")
+    logging.debug("Menu found")
+
+
+def run_battle(
+    run_function: Callable,
+    times: int = 1,
+    config_file: str = "config.conf",
+) -> list[int, ...]:
+    """Run wrapper
+
+    Args:
+        run_function (Callable): A function that describes what to do in a run
+        times (int, optional): Amount of times to run each function. Defaults to 1.
+        config_file (str, optional): Path to the config file. Defaults to "config.conf".
+
+    Returns:
+        list[int, ...]: All the times fetched from the execution
+    """
+
+    CONFIG.read(config_file)
+
+    run_times = []
+
+    for run_num in range(times):
+        print(f"=== Run {run_num} ===")
+
+        start_time = time.time()
+        run_function()
+        elapsed_time = int(time.time() - start_time)
+        run_times.append(elapsed_time)
+
+        print(f"Run {run_num} used {elapsed_time} seconds")
+        print(
+            f"Average time for each run = {sum(run_times)/len(run_times):.2f}", end="\n\n"
+        )
+
+    return run_times

@@ -1,26 +1,23 @@
 from pynput.mouse import Listener, Controller
 from configparser import ConfigParser
 import keyboard
+import logging
+import argparse
+
+logging.basicConfig(
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="[CC %(levelname)s] %(message)s ",
+)
 
 CONFIG = ConfigParser()
-CONFIG_FILE = "config_laptop.ini"
-
-# DEBUG
-DEBUG = True
 
 
-def debug(s: str) -> None:
-    if DEBUG:
-        print(f"[DEBUG] {s}")
-
-
-# Mouse listener
 def on_click(x, y, button, pressed) -> bool:
-    if not pressed:
-        return False
+    return pressed
 
 
-def get_mouse_coords() -> (int):
+def get_mouse_coords() -> tuple[int, int]:
     with Listener(on_click=on_click) as listener:
         mouse = Controller()
         listener.join()
@@ -28,98 +25,114 @@ def get_mouse_coords() -> (int):
     return mouse.position
 
 
-# Misc
-def get_box_coords() -> (int):
+def get_box_coords() -> tuple[int, int, int, int]:
     return get_mouse_coords() + get_mouse_coords()
 
 
-# Methods
 def servant_skills() -> None:
-    for i in range(3):
-        debug(f"Calibrating servant {i}")
-        CONFIG[f"Servant {i}"] = {}
+    logging.info("Calibrating servant skills")
 
-        for j in range(3):
+    for servant_num in range(3):
+        logging.info(f"Calibrating servant {servant_num}")
+        CONFIG[f"Servant {servant_num}"] = {}
+
+        for skill_num in range(3):
             coords = get_box_coords()
-            debug(f"Skill {j} at {coords}")
-            CONFIG[f"Servant {i}"][f"skill_{j}"] = " ".join(
-                str(value) for value in coords
+            logging.debug(f"Skill {skill_num} at {coords}")
+
+            CONFIG[f"Servant {servant_num}"][f"skill_{skill_num}"] = " ".join(
+                map(str, coords)
             )
 
 
 def target_skill() -> None:
-    debug("Calibrating target skills")
-    for i in range(3):
+    logging.info("Calibrating target skills")
+
+    for servant_num in range(3):
         coords = get_box_coords()
-        debug(f"Servant {i} at {coords}")
-        CONFIG[f"Servant {i}"]["target_skill"] = " ".join(
-            str(value) for value in coords
-        )
+        logging.debug(f"Servant {servant_num} at {coords}")
+
+        CONFIG[f"Servant {servant_num}"]["target_skill"] = " ".join(map(str, coords))
 
 
 def enemies() -> None:
-    debug("Calibrating enemies")
+    logging.info("Calibrating enemies")
+
     CONFIG["Enemies"] = {}
-    for i in range(3):
+
+    for enemy_num in range(3):
         coords = get_box_coords()
-        debug(f"Enemy {i} at {coords}")
-        CONFIG["Enemies"][f"coord_{i}"] = " ".join(str(value) for value in coords)
+        logging.debug(f"Enemy {enemy_num} at {coords}")
+        CONFIG["Enemies"][f"coord_{enemy_num}"] = " ".join(map(str, coords))
 
 
 def attack_button() -> None:
-    debug("Calibrating attack button")
+    logging.info("Calibrating attack button")
+
     CONFIG["Attack button"] = {}
+
     coords = get_box_coords()
-    debug(f"Attack button at {coords}")
-    CONFIG["Attack button"]["coords"] = " ".join(str(value) for value in coords)
+    logging.debug(f"Attack button at {coords}")
+    CONFIG["Attack button"]["coords"] = " ".join(map(str, coords))
 
 
 def mystic_code() -> None:
-    debug("Calibrating mystic code ")
+    logging.info("Calibrating mystic code ")
+
     CONFIG["Mystic code"] = {}
+
     coords = get_box_coords()
-    debug(f"Mystic code coords at {coords}")
-    CONFIG["Mystic code"]["coords"] = " ".join(str(value) for value in coords)
-    debug("Calibrating mystic code skills")
-    for i in range(3):
+    logging.debug(f"Mystic code coords at {coords}")
+    CONFIG["Mystic code"]["coords"] = " ".join(map(str, coords))
+
+    logging.info("Calibrating mystic code skills")
+    for mc_skill_num in range(3):
         coords = get_box_coords()
-        debug(f"MC skill {i} at {coords}")
-        CONFIG["Mystic code"][f"skill_{i}"] = " ".join(str(value) for value in coords)
+        logging.debug(f"MC skill {mc_skill_num} at {coords}")
+        CONFIG["Mystic code"][f"skill_{mc_skill_num}"] = " ".join(map(str, coords))
 
 
 def mystic_code_exchange() -> None:
-    debug("Calibrating Mystic code exchange")
+    logging.info("Calibrating Mystic code exchange")
     CONFIG["Exchange"] = {}
-    for i in range(6):
-        coords = get_box_coords()
-        debug(f"Servant {i} at {coords}")
-        CONFIG["Exchange"][f"servant_{i}"] = " ".join(str(value) for value in coords)
 
-    debug("Calibrating replace button")
-    CONFIG["Exchange"]["replace"] = " ".join(str(value) for value in get_box_coords())
+    for servant_num in range(6):
+        coords = get_box_coords()
+        logging.debug(f"Servant {servant_num} at {coords}")
+        CONFIG["Exchange"][f"servant_{servant_num}"] = " ".join(map(str, coords))
+
+    logging.info("Calibrating replace button")
+
+    coords = get_box_coords()
+    logging.debug(f"Replace button at {coords}")
+    CONFIG["Exchange"]["replace"] = " ".join(map(str, coords))
 
 
 def servant_face_cards() -> None:
-    debug("Calibrating Face cards")
+    logging.info("Calibrating Face cards")
+
     CONFIG["Face cards"] = {}
-    for i in range(5):
+
+    for card_num in range(5):
         coords = get_box_coords()
-        debug(f"Card {i} at {coords}")
-        CONFIG["Face cards"][f"card_{i}"] = " ".join(str(value) for value in coords)
+        logging.debug(f"Card {card_num} at {coords}")
+        CONFIG["Face cards"][f"card_{card_num}"] = " ".join(map(str, coords))
 
 
-def servant_NP() -> None:
-    debug("Calibrating NP cards")
-    for i in range(3):
+def servant_np() -> None:
+    logging.info("Calibrating NP cards")
+
+    for servant_num in range(3):
         coords = get_box_coords()
-        debug(f"Card {i} at {coords}")
-        CONFIG[f"Servant {i}"]["NP"] = " ".join(str(value) for value in coords)
+        logging.debug(f"Card {servant_num} at {coords}")
+        CONFIG[f"Servant {servant_num}"]["NP"] = " ".join(map(str, coords))
 
 
-def calibrate(config_file=CONFIG_FILE):
+def calibrate(config_file="config.conf"):
+    logging.info("Calibration procedure")
     calibrating = (
         servant_skills,
-        servant_NP,
+        servant_np,
         servant_face_cards,
         mystic_code,
         mystic_code_exchange,
@@ -127,10 +140,11 @@ def calibrate(config_file=CONFIG_FILE):
         enemies,
         target_skill,
     )
-    print("Calibration procedure")
+
     CONFIG.read(config_file)
+
     for procedure in calibrating:
-        print(f"Next up is {procedure.__name__}, press ENTER to proceed ...")
+        logging.info(f"Next up is {procedure.__name__}, press ENTER to proceed ...")
         keyboard.wait("enter")
         procedure()
 
@@ -139,4 +153,10 @@ def calibrate(config_file=CONFIG_FILE):
 
 
 if __name__ == "__main__":
-    calibrate()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-o", "--output", help="Output file", default="config.conf", type=str
+    )
+    args = parser.parse_args()
+
+    calibrate(args.output)

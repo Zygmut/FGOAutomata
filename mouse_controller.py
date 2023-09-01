@@ -1,39 +1,30 @@
 from time import sleep
 from random import randint
 from pynput.mouse import Button, Controller
+import logging
 
 mouse = Controller()
 
-# DEBUG
-DEBUG = False
+logging.basicConfig(
+    encoding="utf-8",
+    level=logging.DEBUG,
+    format="[MC %(levelname)s] %(message)s ",
+)
 
 
-def __debug(string: str) -> None:
-    """Prints output with a custom format if global variable GLOBAL is True
-
-    Args:
-        s (str): String to output to stdout
-    """
-
-    if DEBUG:
-        print(f"[MC DEBUG] {string}")
-
-
-def mouse_click(x_coord: int, y_coord: int) -> None:
-    """Simulate mouse click at (x,y) coordinates
+def mouse_click(coords: tuple[int, int]) -> None:
+    """Simulate mouse click at the passed coordinates
 
     Args:
-        x (int): Absolute x coordinate
-        y (int): Absolute y coordinate
+        coords (tuple[int, int]): x and y coordinates
     """
-
-    mouse.position = (x_coord, y_coord)
+    mouse.position = coords
     sleep(0.1)
     mouse.click(Button.left)
-    __debug(f"Clicked at {(x_coord,y_coord)}")
+    logging.debug(f"Clicked at {coords}")
 
 
-def random_coord_inside(
+def __random_coord_inside(
     coords: tuple[int, int, int, int], offset: int = 10
 ) -> tuple[int, int]:
     """Generates a random coordinate inside some values that represent the
@@ -53,11 +44,11 @@ def random_coord_inside(
     """
 
     if offset < 0:
-        print("Offset cannot be less than 0")
+        logging.error("Offset cannot be less than 0")
         raise ValueError
 
     if offset > ((abs(coords[0] - coords[1])) or (abs(coords[1] - coords[3]))):
-        print("Offset is greater than the difference of coordinates")
+        logging.error("Offset is greater than the difference of coordinates")
         raise ValueError
 
     if (coords[0] + offset) < (coords[2] - offset):
@@ -69,7 +60,8 @@ def random_coord_inside(
         y = randint(coords[1] + offset, coords[3] - offset)
     else:
         y = randint(coords[3] - offset, coords[1] + offset)
-    __debug(f"Random coord generated at {(x,y)} from {coords}")
+
+    logging.debug(f"Random coord generated at {(x,y)} from {coords}")
     return (x, y)
 
 
@@ -80,8 +72,7 @@ def random_click_inside(bound: tuple[int, int, int, int]) -> None:
         bound (tuple[int,int,int,int]): Boundaries of the click e.i (x1, y1, x2, y2)
     """
 
-    coords = random_coord_inside(bound)
-    mouse_click(coords[0], coords[1])
+    mouse_click(__random_coord_inside(bound))
 
 
 def click_around(x_coord: int, y_coord: int, radius: int = 100) -> None:

@@ -1,5 +1,8 @@
 # Calibration files
-*.ini
+*.conf
+
+# Pipenv
+*.lock
 
 # Pycache stuff
 *.pyc
