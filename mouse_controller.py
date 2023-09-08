@@ -65,17 +65,21 @@ def __random_coord_inside(
     return (x, y)
 
 
-def random_click_inside(bound: tuple[int, int, int, int]) -> None:
+def random_click_inside(bound: tuple[int, int, int, int]) -> tuple[int, int]:
     """Clicks at a random coordinate inside some boundaries
 
     Args:
         bound (tuple[int,int,int,int]): Boundaries of the click e.i (x1, y1, x2, y2)
+
+    Returns:
+        tuple[int, int]: Clicked point
     """
+    coords = __random_coord_inside(bound)
+    mouse_click(coords)
+    return coords
 
-    mouse_click(__random_coord_inside(bound))
 
-
-def click_around(x_coord: int, y_coord: int, radius: int = 100) -> None:
+def click_around(x_coord: int, y_coord: int, radius: int = 100) -> tuple[int, int]:
     """Clicks around the point (x,y)
 
     Args:
@@ -84,6 +88,6 @@ def click_around(x_coord: int, y_coord: int, radius: int = 100) -> None:
         radius (int, optional): Dimension of the space created to click.
         Defaults to 100.
     """
-    random_click_inside(
+    return random_click_inside(
         (x_coord - radius, y_coord + radius, x_coord + radius, y_coord - radius)
     )
